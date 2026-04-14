@@ -1,0 +1,34 @@
+#al crear un "diccionario" o mapa de datos completos, podremos agrupar el codigo producto por nombre producto
+mapa_productos = df.dropna(subset=['nombre_prod']).set_index('producto')['nombre_prod'].to_dict()
+
+# se puede ver cual codigo producto pertenece al nombre producto
+print("Mapa de productos descubierto:", mapa_productos)
+
+# con el mapa creado se rellenan los nombre_prod vacios basandose en su codigo
+df['nombre_prod'] = df['nombre_prod'].fillna(df['producto'].map(mapa_productos))
+
+# Verificamos cuantos nulos logramos salvar
+nulos_restantes = df['nombre_prod'].isnull().sum()
+print(f"\nNulos restantes en nombre_prod después del rescate inteligente: {nulos_restantes}")
+
+# auqellos que no fueron encontrados, los dejaremos con el nombre producto sin registro
+df['nombre_prod'] = df['nombre_prod'].fillna('Producto Sin Registro')
+
+filas_parchadas = df[df['nombre_prod'] == 'Producto Sin Registro']
+
+print(f"Hay {len(filas_parchadas)} filas con este parche.")
+print("Aquí tienes una muestra de cómo se ven:")
+
+
+print(filas_parchadas[['producto', 'nombre_prod', 'cantidad']].head())
+
+#Quería trabajar con esta columna, pero cuando íbamos avanzando, me di cuenta de que era irrelevante y tenía demasiados datos nulos. Además, cuando
+#intenté sacar la mediana y la moda, me daban números demasiado similares. A la hora de interpretarlos, se perdía un poco la razón, ya que no todos 
+#los vehículos pueden tener un rendimiento de combustible similar
+df = df.drop(columns=['veh_efficiency'])
+
+nulos_por_columna = df.isnull().sum()
+print("Conteo de datos faltantes por columna:")
+print(nulos_por_columna)
+
+#finalizamos la limpieza
