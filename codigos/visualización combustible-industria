@@ -1,0 +1,12 @@
+fig, ax = plt.subplots(figsize=(8,4))
+
+df.groupby('industria')['cantidad_comp_15'].mean().sort_values().plot(kind='bar', ax=ax)
+
+ax.set_ylabel("Cantidad promedio de combustible")
+ax.set_xlabel("Industria")
+ax.set_title("Promedio de combustible cargado por industria")
+
+ax.grid(linestyle=":")
+
+plt.tight_layout()
+plt.show()
