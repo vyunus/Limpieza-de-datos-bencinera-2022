@@ -1,0 +1,26 @@
+# Identificamos cuántos datos nulos tenemos en las columnas
+nulos_por_columna = df.isnull().sum()
+print("Conteo de datos faltantes por columna:")
+print(nulos_por_columna)
+
+# Esto quiere decir que no posee ningun tipo de error
+df['codigo_error'].fillna('NA')
+
+df['codigo_error'] = df['codigo_error'].fillna('NA')
+print(df.isnull().sum())
+
+#limpieza caracter basura industria
+df['industria'] = df['industria'].str.replace(r'[^a-zA-Z0-9 ]', '', regex=True)
+print(df['industria'].head(10))
+
+df['industria'].unique().tolist()
+
+# Rellenamos los nulos de industria creamos una nueva categoria llamada desconocido
+df['industria'] = df['industria'].fillna('Desconocido')
+
+# Verificamos si queda algun nulo en industria
+print(f"Nulos restantes en industria: {df['industria'].isnull().sum()}")
+
+# top ventas bencinera 
+print("\n Top 5 industrias en la bencinera:")
+print(df['industria'].value_counts().head())
