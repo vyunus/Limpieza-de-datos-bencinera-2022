@@ -1,0 +1,25 @@
+import pandas as pd
+import numpy as np
+df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
+df['timestamp_stop'] = pd.to_datetime(df['timestamp_stop'], errors='coerce')
+
+#restamoos las fechas para calcular el tiempo de carga
+df['duracion_carga_seg'] = (df['timestamp_stop'] - df['timestamp']).dt.total_seconds()
+
+#Lunes=0, Domingo=6
+df['dia_de_semana'] = df['timestamp'].dt.dayofweek
+
+# eliminamos estas columnas ya que extrajimos su información para crear las nuevas
+df = df.drop(columns=['timestamp', 'timestamp_stop'])
+
+#se rellenan las fechas vacias
+df['duracion_carga_seg'] = df['duracion_carga_seg'].fillna(df['duracion_carga_seg'].median())
+df['dia_de_semana'] = df['dia_de_semana'].fillna(df['dia_de_semana'].mode()[0])
+
+print("\nUn vistazo a nuestra nueva súper-columna (Duración en Segundos):")
+print(df[['duracion_carga_seg', 'dia_de_semana']].head())
+
+# Identificamos cuántos datos nulos tenemos en las columnas
+nulos_por_columna = df.isnull().sum()
+print("Conteo de datos faltantes por columna:")
+print(nulos_por_columna)
