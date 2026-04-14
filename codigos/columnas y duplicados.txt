@@ -1,0 +1,46 @@
+import pandas as pd
+import numpy as np
+
+df=pd.read_csv('transacciones_bencinera.csv')
+df
+
+#eliminamos las columnas no utilizadas
+df = df.drop(columns=['id_transaccion','id_equipo','pump_site_id','tank_site_id','user_site_id',
+                      'volumen_inicial','volumen_final','temp_inicial','temp_final','volumen_comp_15_inicial',
+                      'volumen_comp_15_final','codigo_producto','geo_latitud','geo_longitud','id_industria'])
+
+'Columnas eliminadas'
+#id_transaccion: se elimina ya que existe un identificador unico unique_id_transa
+#id_equipo: este identificador no es relevante para el trabajo
+#pump_site_id: se elimina, ya que la información también la tenemos en id_bomba
+#tank_site_id: se elimina, porque no es necesario para nuestro analisis
+#user_site_id: tiene demasiados datos faltantes y es innecesario
+#volumen_inicial: es el volumen de combustible con el que esta cargado al llegar (es innecesario)
+#volumen_final: volumen de combustible al finalizar la carga
+#temp_inicial: es la temperatura de combustible al llegar (es innecesario)
+#temp_final: temperatura de combustible al finalizar la carga
+#volumen_comp_15_inicial: no es relevante para el analisis
+#volumen_comp_15_final: no es relevante para el analisis
+#codigo_producto: ya existe la columna nombre_prod
+#geo_latitud: ubicacion precisa (no lo usaremos)
+#geo_longitud: ubicacion precisa (no lo usaremos)
+#id_industria: ya sabemos a que industria pertenece en la columna industria
+
+#revisamos que se hayan eliminado correctamente
+df.columns
+
+#revisamos si tenemos valores duplicados
+dup_total = df.duplicated().sum()
+
+#se revisan cuáles son antes de borrar
+print("\nRegistros detectados como duplicados:")
+print(df[df.duplicated(keep=False)])
+
+# Limpiamos los datos duplicados
+df = df.drop_duplicates().copy()
+print("\nLimpieza realizada. Nuevo total de filas:", len(df))
+
+# Identificamos cuántos datos nulos tenemos en las columnas
+nulos_por_columna = df.isnull().sum()
+print("Conteo de datos faltantes por columna:")
+print(nulos_por_columna)

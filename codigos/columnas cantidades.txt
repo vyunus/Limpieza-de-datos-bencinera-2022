@@ -1,0 +1,42 @@
+#Calculamos la mediana de la columna cantidad
+mediana_cantidad = df['cantidad'].median()
+
+# Rellenamos los valores nulos con la mediana
+df['cantidad'] = df['cantidad'].fillna(mediana_cantidad)
+
+# tambien se limpia la cant_comp_15 y sus valores nulos se sustituyen por la mediana
+df['cantidad_comp_15'] = df['cantidad_comp_15'].fillna(df['cantidad_comp_15'].median())
+
+print(f"¡Relleno completado usando la mediana: {mediana_cantidad}!")
+
+nulos_cantidad = df['cantidad'].isnull().sum()
+print(f"Nulos encontrados en cantidad: {nulos_cantidad}")
+
+import numpy as np
+
+# calculamos el rango normal (IQR: sacando Q1 y Q3 para definir el Límite Superior)
+Q1_cant = df['cantidad'].quantile(0.25)
+Q3_cant = df['cantidad'].quantile(0.75)
+limite_sup_cant = Q3_cant + 1.5 * (Q3_cant - Q1_cant)
+
+Q1_comp = df['cantidad_comp_15'].quantile(0.25)
+Q3_comp = df['cantidad_comp_15'].quantile(0.75)
+limite_sup_comp = Q3_comp + 1.5 * (Q3_comp - Q1_comp)
+
+# filtramos los numeros grandes usando np.where como un condicional rápido
+#se consulta una fila y en caso de superar el limite maximo, lo remplazamos por la mediana. En caso de ser un valor normal se queda igual
+df['cantidad'] = np.where(df['cantidad'] > limite_sup_cant, df['cantidad'].median(), df['cantidad'])
+df['cantidad_comp_15'] = np.where(df['cantidad_comp_15'] > limite_sup_comp, df['cantidad_comp_15'].median(), df['cantidad_comp_15'])
+
+
+# Estos numeros atipicos se reemplazan al igual que el anterior, por la mediana
+df['cantidad'] = np.where(df['cantidad'] <= 0, df['cantidad'].median(), df['cantidad'])
+df['cantidad_comp_15'] = np.where(df['cantidad_comp_15'] <= 0, df['cantidad_comp_15'].median(), df['cantidad_comp_15'])
+
+
+print(df[['cantidad', 'cantidad_comp_15']].describe().round(2))
+
+# Identificamos cuántos datos nulos tenemos en las columnas
+nulos_por_columna = df.isnull().sum()
+print("Conteo de datos faltantes por columna:")
+print(nulos_por_columna)
